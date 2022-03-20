@@ -1,4 +1,3 @@
-from pdb import Restart
 import streamlit as st
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 import pandas as pd
@@ -314,10 +313,17 @@ if start_project:
     Results.loc[1, 'Оценка взаимодействия'] = [-1]
     Results.loc[2, 'Оценка взаимодействия'] = [-1]
 
-    Results = Results.set_index('Кто').astype(int)
-
-    st.subheader('Общие')
-    st.table(Results)
+    st.header('Общие')
+    st.text('Хороший результат >= 100, ниже - плохой результат')
+    st.table(Results.set_index('Кто').astype(int))
+    srok = 0.15*Results.loc[0, 'Оценка сроков'] + 0.35*Results.loc[0, 'Оценка сроков'] + 0.5*Results.loc[0, 'Оценка сроков']
+    uspeh = 0.15*Results.loc[0, 'Оценка успешности'] + 0.35*Results.loc[0, 'Оценка успешности'] + 0.5*Results.loc[0, 'Оценка успешности']
+    if project_type == 'Срочный':
+        st.subheader('Итоговая эффективность = {}'.format(round(0.7*srok + 0.25*uspeh + 0.05*Results.loc[0, 'Оценка взаимодействия'], 2)))
+    elif project_type == 'Исследовательский':
+        st.subheader('Итоговая эффективность = {}'.format(round(0.25*srok + 0.7*uspeh + 0.05*Results.loc[0, 'Оценка взаимодействия'], 2)))
+    else:
+        st.subheader('Итоговая эффективность = {}'.format(round(0.4*srok + 0.45*uspeh + 0.1*Results.loc[0, 'Оценка взаимодействия'], 2)))
 
     # Результаты по сотрудникам
 
@@ -328,7 +334,8 @@ if start_project:
     Results_s['Оценка взаимодействия'] = OSS['Средняя оценка качества взаимодействия']
     Results_s = Results_s.set_index('id').astype(int)
     
-    st.subheader('Отдельно по специалистам')
+    st.header('Отдельно по специалистам')
+    st.text('Хороший результат >= 100, ниже - плохой результат')
     st.table(Results_s)
 
     # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
